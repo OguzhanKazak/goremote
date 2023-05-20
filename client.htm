@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>My First JavaScript</h1>
+
+<script>
+const socket = new WebSocket("ws://localhost:8080/ws");
+
+const encoder = new TextEncoder()
+
+// Sunucuyla bağlantı kurulduğunda tetiklenen olay
+socket.onopen = function(event) {
+  console.log("Sunucuya bağlandı");
+};
+
+// Sunucudan mesaj alındığında tetiklenen olay
+socket.onmessage = function(event) {
+  const message = event.data;
+  console.log("Alınan mesaj: " + message);
+
+  // Fare hareketlerini burada işleyebilirsiniz
+};
+
+// Sunucuyla bağlantı kapatıldığında tetiklenen olay
+socket.onclose = function(event) {
+  console.log("Sunucu bağlantısı kapatıldı");
+};
+
+// Fare hareketlerini sunucuya göndermek için bir fonksiyon
+function sendMouseMovement(x, y) {
+  const movement = { x: x, y: y };
+  socket.send(encoder.encode(JSON.stringify(movement)));
+}
+
+// Örneğin, telefonunuzdaki dokunma olayını dinleyerek fare hareketlerini sunucuya gönderebilirsiniz
+document.addEventListener("mousemove", function(event) {
+  const x = Math.round(event.offsetX);
+  const y = Math.round(event.offsetY);
+  sendMouseMovement(x, y);
+});
+
+document.addEventListener("touchmove", function(event) {
+  const touch = event.touches[0];
+  const x = Math.round(touch.clientX);
+  const y = Math.round(touch.clientY);
+  sendMouseMovement(x, y);
+});
+</script>
+
+</body>
+</html> 
+
