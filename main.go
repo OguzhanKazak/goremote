@@ -10,7 +10,7 @@ import (
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true // İstemci kaynaklı doğrulamayı devre dışı bırakmak için true döndürün.
+		return true
 	},
 }
 
@@ -27,7 +27,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	// İstemciden mesajları almak için sonsuz bir döngü
+	// Main logic here.
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {

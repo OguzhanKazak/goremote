@@ -5,41 +5,41 @@
 <h1>My First JavaScript</h1>
 
 <script>
-const socket = new WebSocket("ws://localhost:8080/ws");
+const socket = new WebSocket("ws://localhost:8080/ws");  //localhost should be the server's local ip address.
 
 const encoder = new TextEncoder()
 
-// Sunucuyla bağlantı kurulduğunda tetiklenen olay
+// Connection established with the server 
 socket.onopen = function(event) {
-  console.log("Sunucuya bağlandı");
+  console.log("Connection Established.");
 };
 
-// Sunucudan mesaj alındığında tetiklenen olay
+// Message is received from server
 socket.onmessage = function(event) {
   const message = event.data;
-  console.log("Alınan mesaj: " + message);
+  console.log("Recieved message: " + message);
 
-  // Fare hareketlerini burada işleyebilirsiniz
 };
 
-// Sunucuyla bağlantı kapatıldığında tetiklenen olay
+// Connection closed.
 socket.onclose = function(event) {
-  console.log("Sunucu bağlantısı kapatıldı");
+  console.log("Connection closed.");
 };
 
-// Fare hareketlerini sunucuya göndermek için bir fonksiyon
+// Sending mouse coordinates to server as byte array
 function sendMouseMovement(x, y) {
   const movement = { x: x, y: y };
   socket.send(encoder.encode(JSON.stringify(movement)));
 }
 
-// Örneğin, telefonunuzdaki dokunma olayını dinleyerek fare hareketlerini sunucuya gönderebilirsiniz
+// Listening mouse events and getting x, y coordinates.
 document.addEventListener("mousemove", function(event) {
   const x = Math.round(event.offsetX);
   const y = Math.round(event.offsetY);
   sendMouseMovement(x, y);
 });
 
+// Listening touch events and getting x, y coordinates.
 document.addEventListener("touchmove", function(event) {
   const touch = event.touches[0];
   const x = Math.round(touch.clientX);
