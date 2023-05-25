@@ -1,8 +1,30 @@
 <!DOCTYPE html>
 <html>
-<body>
 
-<h1>My First JavaScript</h1>
+<style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    height: 100vh;
+    width: 100vw;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  div {
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+    background-color: #3ac96f;
+  }
+</style>
+
+<body>
+  <div class="box" id="box1"></div>
+</body>
 
 <script>
 const socket = new WebSocket("ws://192.168.1.30:8080/ws");  //localhost should be the server's local ip address.
@@ -36,24 +58,30 @@ function sendMouseClick() {
   socket.send("LeftClick")
 }
 
-// Listening mouse events and getting x, y coordinates.
-document.addEventListener("mousemove", function(event) {
-  const x = Math.round(event.offsetX);
-  const y = Math.round(event.offsetY);
-  sendMouseMovement(x, y);
-});
-
 // Listening touch events and getting x, y coordinates.
-document.addEventListener("touchmove", function(event) {
-  const touch = event.touches[0];
-  const x = Math.round(touch.screenX);
-  const y = Math.round(touch.screenY);
-  sendMouseMovement(x, y);
-});
+window.addEventListener('load', function(){
+ 
+  var box1 = document.getElementById('box1')
+  let initialX = 0
+  let initialY = 0
 
+  box1.addEventListener('touchstart', function(e){
+    let touchobj = e.changedTouches[0]; // reference to first touch point.
+    initialX = touchobj.clientX;
+    initialY = touchobj.clientY;
+  }, false)
 
-document.addEventListener("touchstart", function(event) {
-  sendMouseClick();
+  box1.addEventListener('touchmove', function(e){
+    let touchobj = e.changedTouches[0]; // reference to first touch point.
+    let offsetX = Math.round(touchobj.clientX - initialX);
+    let offsetY = Math.round(touchobj.clientY - initialY);
+    sendMouseMovement(offsetX, offsetY);
+  }, false)
+
+}, false)
+
+addEventListener("click", (event) => {
+  sendMouseClick()
 });
 </script>
 

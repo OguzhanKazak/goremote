@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"syscall"
 	"unsafe"
 )
@@ -27,8 +26,10 @@ type POINT struct {
 	Y int `json:"y"`
 }
 
-func SetCursorPosition(x, y int) {
-	log.Printf("Setting position: x: %d y: %d", x, y)
+func SetCursorPosition(x, y int) { //TODO: fix acceleration bug.
+	currX, currY := GetCursorPosition()
+	x = x + currX
+	y = y + currY
 	setCursorPos.Call(uintptr(x), uintptr(y))
 }
 
