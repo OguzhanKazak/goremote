@@ -34,9 +34,19 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			break
 		}
+
 		var receivedCoordinate POINT
-		json.Unmarshal([]byte(msg), &receivedCoordinate)
-		log.Printf("received X: %d received Y: %d", receivedCoordinate.X, receivedCoordinate.Y)
-		SetCursorPosition(receivedCoordinate.X, receivedCoordinate.Y)
+
+		switch strMsg := string(msg[:]); strMsg {
+		case "LeftClick":
+			LeftClick()
+		case "linux":
+
+		default:
+			json.Unmarshal([]byte(msg), &receivedCoordinate)
+			log.Printf("received X: %d received Y: %d", receivedCoordinate.X, receivedCoordinate.Y)
+			SetCursorPosition(receivedCoordinate.X, receivedCoordinate.Y)
+		}
+
 	}
 }

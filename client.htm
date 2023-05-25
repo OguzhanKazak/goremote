@@ -5,13 +5,15 @@
 <h1>My First JavaScript</h1>
 
 <script>
-const socket = new WebSocket("ws://localhost:8080/ws");  //localhost should be the server's local ip address.
+const socket = new WebSocket("ws://192.168.1.30:8080/ws");  //localhost should be the server's local ip address.
 
 const encoder = new TextEncoder()
 
 // Connection established with the server 
 socket.onopen = function(event) {
   console.log("Connection Established.");
+  var w = screen.width;
+  var h = screen.height;
 };
 
 // Message is received from server
@@ -32,6 +34,10 @@ function sendMouseMovement(x, y) {
   socket.send(encoder.encode(JSON.stringify(movement)));
 }
 
+function sendMouseClick() {
+  socket.send("LeftClick")
+}
+
 // Listening mouse events and getting x, y coordinates.
 document.addEventListener("mousemove", function(event) {
   const x = Math.round(event.offsetX);
@@ -42,9 +48,14 @@ document.addEventListener("mousemove", function(event) {
 // Listening touch events and getting x, y coordinates.
 document.addEventListener("touchmove", function(event) {
   const touch = event.touches[0];
-  const x = Math.round(touch.clientX);
-  const y = Math.round(touch.clientY);
+  const x = Math.round(touch.screenX);
+  const y = Math.round(touch.screenY);
   sendMouseMovement(x, y);
+});
+
+
+document.addEventListener("touchstart", function(event) {
+  sendMouseClick();
 });
 </script>
 
