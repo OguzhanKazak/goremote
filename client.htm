@@ -10,6 +10,7 @@
   body {
     height: 100vh;
     width: 100vw;
+    overscroll-behavior-y: contain;
   }
   * {
     box-sizing: border-box;
@@ -19,6 +20,7 @@
     width: 100%;
     padding: 10px;
     background-color: #3ac96f;
+    overflow: hidden;
   }
 </style>
 
@@ -30,6 +32,8 @@
 const socket = new WebSocket("ws://192.168.1.30:8080/ws");  //localhost should be the server's local ip address.
 
 const encoder = new TextEncoder()
+
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max); 
 
 // Connection established with the server 
 socket.onopen = function(event) {
@@ -69,19 +73,23 @@ window.addEventListener('load', function(){
     let touchobj = e.changedTouches[0]; // reference to first touch point.
     initialX = touchobj.clientX;
     initialY = touchobj.clientY;
+    e.preventDefault()
   }, false)
 
-  box1.addEventListener('touchmove', function(e){
-    let touchobj = e.changedTouches[0]; // reference to first touch point.
+  box1.addEventListener('touchmove', function(e) {
+    let touchobj = e.changedTouches[0];
     let offsetX = Math.round(touchobj.clientX - initialX);
     let offsetY = Math.round(touchobj.clientY - initialY);
-    sendMouseMovement(offsetX, offsetY);
+    sendMouseMovement(clamp(offsetX, -100, 100), clamp(offsetY, -100, 100));
+    console.log(clamp(offsetX, -100, 100)+" "+clamp(offsetY, -100, 100))
+    e.preventDefault()
   }, false)
 
 }, false)
 
 addEventListener("click", (event) => {
   sendMouseClick()
+  event.preventDefault()
 });
 </script>
 

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"syscall"
 	"unsafe"
 )
@@ -22,21 +24,28 @@ const (
 )
 
 type POINT struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X int32 `json:"x"`
+	Y int32 `json:"y"`
 }
 
-func SetCursorPosition(x, y int) { //TODO: fix acceleration bug.
-	currX, currY := GetCursorPosition()
-	x = x + currX
-	y = y + currY
+func SetCursorPosition(x, y int32) {
+	currX, currY, _ := GetCursorPosition()
+	x = x/10 + currX
+	y = y/10 + currY
+
 	setCursorPos.Call(uintptr(x), uintptr(y))
 }
 
-func GetCursorPosition() (int, int) {
+func GetCursorPosition() (int32, int32, error) {
 	var point POINT
-	getCursorPos.Call(uintptr(unsafe.Pointer(&point)))
-	return int(point.X), int(point.Y)
+	ret, _, _ := getCursorPos.Call(uintptr(unsafe.Pointer(&point)))
+	if ret == 0 {
+		log.Printf("failed to get cursor position")
+		return 0, 0, fmt.Errorf("failed to get cursor position")
+	}
+
+	log.Printf("%v", point)
+	return int32(point.X), int32(point.Y), nil
 }
 
 func LeftClick() {
