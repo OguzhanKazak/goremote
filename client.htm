@@ -11,21 +11,15 @@
     height: 100vh;
     width: 100vw;
     overscroll-behavior-y: contain;
+    background-color: #3ac96f;
   }
   * {
     box-sizing: border-box;
   }
-  div {
-    height: 100%;
-    width: 100%;
-    padding: 10px;
-    background-color: #3ac96f;
-    overflow: hidden;
-  }
 </style>
 
 <body>
-  <div class="box" id="box1"></div>
+  <button onclick="showFullScreenConfirmation()">FullScreen mode</button> 
 </body>
 
 <script>
@@ -52,6 +46,23 @@ socket.onclose = function(event) {
   console.log("Connection closed.");
 };
 
+function showFullScreenConfirmation() {
+  let text = "Connection Established. Enable FullScreen Mode?";
+  if (confirm(text) == true) {
+    let docElm = document.documentElement;
+  if (docElm.requestFullscreen) {
+    docElm.requestFullscreen();
+  } else if (docElm.msRequestFullscreen) {
+    docElm.msRequestFullscreen();
+  } else if (docElm.mozRequestFullScreen) {
+    docElm.mozRequestFullScreen();
+  } else if (docElm.webkitRequestFullScreen) {
+    docElm.webkitRequestFullScreen();
+  }
+  } else {
+  }
+}
+
 // Sending mouse coordinates to server as byte array
 function sendMouseMovement(x, y) {
   const movement = { x: x, y: y };
@@ -63,34 +74,32 @@ function sendMouseClick() {
 }
 
 // Listening touch events and getting x, y coordinates.
-window.addEventListener('load', function(){
- 
-  var box1 = document.getElementById('box1')
-  let initialX = 0
-  let initialY = 0
 
-  box1.addEventListener('touchstart', function(e){
-    let touchobj = e.changedTouches[0]; // reference to first touch point.
-    initialX = touchobj.clientX;
-    initialY = touchobj.clientY;
-    e.preventDefault()
-  }, false)
+let initialX = 0
+let initialY = 0
 
-  box1.addEventListener('touchmove', function(e) {
-    let touchobj = e.changedTouches[0];
-    let offsetX = Math.round(touchobj.clientX - initialX);
-    let offsetY = Math.round(touchobj.clientY - initialY);
-    sendMouseMovement(clamp(offsetX, -100, 100), clamp(offsetY, -100, 100));
-    console.log(clamp(offsetX, -100, 100)+" "+clamp(offsetY, -100, 100))
-    e.preventDefault()
-  }, false)
-
+document.addEventListener('touchstart', function(e){
+  let touchobj = e.changedTouches[0]; // reference to first touch point.
+  initialX = touchobj.clientX;
+  initialY = touchobj.clientY;
+  e.preventDefault()
 }, false)
 
-addEventListener("click", (event) => {
+document.addEventListener('touchmove', function(e) {
+  let touchobj = e.changedTouches[0];
+  let offsetX = Math.round(touchobj.clientX - initialX);
+  let offsetY = Math.round(touchobj.clientY - initialY);
+  sendMouseMovement(clamp(offsetX, -100, 100), clamp(offsetY, -100, 100));
+  e.preventDefault()
+}, false)
+
+document.addEventListener("click", (e) => {
+  console.log("clicked")
   sendMouseClick()
-  event.preventDefault()
+  e.preventDefault()
 });
+
+
 </script>
 
 </body>
