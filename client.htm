@@ -34,11 +34,6 @@ const encoder = new TextEncoder()
 
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max); 
-const distance = (x1, y1, x2, y2) => {
-  x = x1 - x2
-  y = y1 - y2 
-  return Math.sqrt( x*x + y*y )
-} ;
 const rightClickTouchDuration = 800
 let isTouchMove = false;
 
@@ -103,7 +98,7 @@ document.addEventListener('touchstart', function(e){
   timeout = setTimeout(sendRightMouseClick, rightClickTouchDuration);
 
   isTouchMove = false;
-  
+
 }, false)
 
 document.addEventListener('touchmove', function(e) {
