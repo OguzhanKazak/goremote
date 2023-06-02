@@ -13,21 +13,34 @@
     overscroll-behavior-y: contain;
     background-color: #3ac96f;
   }
+  .fullscreen-button {
+    width: 70px;
+    height: 70px;
+    font-size: 12px;
+  }
   * {
     box-sizing: border-box;
   }
 </style>
 
 <body>
-  <button onclick="showFullScreenConfirmation()">FullScreen mode</button> 
+  <button class="fullscreen-button" onclick="showFullScreenConfirmation()">FullScreen</button> 
 </body>
 
 <script>
-const socket = new WebSocket("ws://192.168.1.30:8080/ws");  //localhost should be the server's local ip address.
 
+const socket = new WebSocket("ws://192.168.1.30:8080/ws");  //localhost should be the server's local ip address.
 const encoder = new TextEncoder()
 
+
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max); 
+const distance = (x1, y1, x2, y2) => {
+  x = x1 - x2
+  y = y1 - y2 
+  return Math.sqrt( x*x + y*y )
+} ;
+const rightClickTouchDuration = 800
+let isTouchMove = false;
 
 // Connection established with the server 
 socket.onopen = function(event) {
@@ -69,35 +82,57 @@ function sendMouseMovement(x, y) {
   socket.send(encoder.encode(JSON.stringify(movement)));
 }
 
-function sendMouseClick() {
+function sendLeftMouseClick() {
   socket.send("LeftClick")
+}
+
+function sendRightMouseClick() {
+  socket.send("RightClick")
 }
 
 // Listening touch events and getting x, y coordinates.
 
-let initialX = 0
-let initialY = 0
+let initialPoint = { x: 0, y: 0}
+let currentPoint   = { x: 0, y: 0}
 
 document.addEventListener('touchstart', function(e){
+
   let touchobj = e.changedTouches[0]; // reference to first touch point.
-  initialX = touchobj.clientX;
-  initialY = touchobj.clientY;
-  e.preventDefault()
+  initialPoint = {x: touchobj.clientX, y: touchobj.clientY};
+
+  timeout = setTimeout(sendRightMouseClick, rightClickTouchDuration);
+
+  isTouchMove = false;
+  
 }, false)
 
 document.addEventListener('touchmove', function(e) {
   let touchobj = e.changedTouches[0];
-  let offsetX = Math.round(touchobj.clientX - initialX);
-  let offsetY = Math.round(touchobj.clientY - initialY);
+
+  clearTimeout(timeout);
+
+  currentPoint = { x: touchobj.clientX, y: touchobj.clientY };
+
+  let offsetX = Math.round(currentPoint.x - initialPoint.x);
+  let offsetY = Math.round(currentPoint.y - initialPoint.y);
+
   sendMouseMovement(clamp(offsetX, -100, 100), clamp(offsetY, -100, 100));
+ 
+  isTouchMove = true;
+ 
   e.preventDefault()
 }, false)
 
-document.addEventListener("click", (e) => {
-  console.log("clicked")
-  sendMouseClick()
-  e.preventDefault()
-});
+document.addEventListener('touchend', function(e) {
+  clearTimeout(timeout);
+
+  if(!isTouchMove) {
+    console.log("clicked")
+    sendLeftMouseClick()
+  }
+
+}, false);
+
 
 
 </script>

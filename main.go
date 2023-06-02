@@ -63,6 +63,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		switch strMsg := string(msg[:]); strMsg {
 		case "LeftClick":
 			LeftClick()
+		case "RightClick":
+			RightClick()
 		default:
 			json.Unmarshal([]byte(msg), &receivedCoordinate)
 			SetCursorPosition(receivedCoordinate.X, receivedCoordinate.Y)
