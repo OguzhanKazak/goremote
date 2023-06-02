@@ -44,7 +44,6 @@ func GetCursorPosition() (int32, int32, error) {
 		return 0, 0, fmt.Errorf("failed to get cursor position")
 	}
 
-	log.Printf("%v", point)
 	return int32(point.X), int32(point.Y), nil
 }
 
