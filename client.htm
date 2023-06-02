@@ -17,6 +17,7 @@
     width: 70px;
     height: 70px;
     font-size: 12px;
+    user-select: none;
   }
   * {
     box-sizing: border-box;
@@ -56,19 +57,18 @@ socket.onclose = function(event) {
 
 function showFullScreenConfirmation() {
   let text = "Connection Established. Enable FullScreen Mode?";
-  if (confirm(text) == true) {
-    let docElm = document.documentElement;
-  if (docElm.requestFullscreen) {
-    docElm.requestFullscreen();
-  } else if (docElm.msRequestFullscreen) {
-    docElm.msRequestFullscreen();
-  } else if (docElm.mozRequestFullScreen) {
-    docElm.mozRequestFullScreen();
-  } else if (docElm.webkitRequestFullScreen) {
-    docElm.webkitRequestFullScreen();
-  }
-  } else {
-  }
+    if (confirm(text) == true) {
+      let docElm = document.documentElement;
+      if (docElm.requestFullscreen) {
+        docElm.requestFullscreen();
+      } else if (docElm.msRequestFullscreen) {
+        docElm.msRequestFullscreen();
+      } else if (docElm.mozRequestFullScreen) {
+        docElm.mozRequestFullScreen();
+      } else if (docElm.webkitRequestFullScreen) {
+        docElm.webkitRequestFullScreen();
+      }
+  } 
 }
 
 // Sending mouse coordinates to server as byte array
@@ -98,7 +98,7 @@ document.addEventListener('touchstart', function(e){
   timeout = setTimeout(sendRightMouseClick, rightClickTouchDuration);
 
   isTouchMove = false;
-
+  e.preventDefault()
 }, false)
 
 document.addEventListener('touchmove', function(e) {
@@ -127,8 +127,6 @@ document.addEventListener('touchend', function(e) {
   }
 
 }, false);
-
-
 
 </script>
 
