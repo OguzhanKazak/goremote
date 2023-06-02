@@ -50,16 +50,19 @@ func GetCursorPosition() (int32, int32, error) {
 func LeftClick() {
 	mouseEvent.Call(
 		uintptr(MOUSEEVENTF_LEFTDOWN),
-		0,
-		0,
-		0,
-		0,
 	)
+
 	mouseEvent.Call(
 		uintptr(MOUSEEVENTF_LEFTUP),
-		0,
-		0,
-		0,
-		0,
+	)
+}
+
+func RightClick() {
+	mouseEvent.Call(
+		uintptr(MOUSEEVENTF_RIGHTDOWN),
+	)
+
+	mouseEvent.Call(
+		uintptr(MOUSEEVENTF_RIGHTUP),
 	)
 }
